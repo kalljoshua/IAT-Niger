@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "672858930164",
+    "project_id": "iat-nigeria",
+    "storage_bucket": "iat-nigeria.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:672858930164:android:74032ee2c9301c24a897a1",
+        "android_client_info": {
+          "package_name": "com.iat.nigeria"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "672858930164-7shh4geh9ui0kbail1rgha8jm65qmb0b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA7MfU0If6SsPxs3Lx-TiLujE-Q4Fi_iL0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "672858930164-7shh4geh9ui0kbail1rgha8jm65qmb0b.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
