@@ -1,9 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:iat_nigeria/models/user/users_profile.dart';
+import 'package:iat_nigeria/services/user/users_service.dart';
+import 'package:iat_nigeria/services/user/users_service_factory.dart';
 import 'package:pinput/pin_put/pin_put.dart';
 
-import '../../wallet_index.dart';
+import '../../../wallet_index.dart';
 
 class OTPScreen extends StatefulWidget {
   final String phone;
@@ -13,6 +16,14 @@ class OTPScreen extends StatefulWidget {
 }
 
 class _OTPScreenState extends State<OTPScreen> {
+  final UsersService usersService = UsersServiceFactory.create();
+
+  @override
+  void initState() {
+    super.initState();
+    _verifyPhone();
+  }
+
   final GlobalKey<ScaffoldState> _scaffoldkey = GlobalKey<ScaffoldState>();
   String _verificationCode;
   final TextEditingController _pinPutController = TextEditingController();
@@ -41,7 +52,7 @@ class _OTPScreenState extends State<OTPScreen> {
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 26),
               ),
             ),
-          ),
+          ),          
           Padding(
             padding: const EdgeInsets.all(30.0),
             child: PinPut(
@@ -75,7 +86,7 @@ class _OTPScreenState extends State<OTPScreen> {
                 }
               },
             ),
-          )
+          ),          
         ],
       ),
     );
@@ -112,11 +123,4 @@ class _OTPScreenState extends State<OTPScreen> {
         timeout: Duration(seconds: 120));
   }
 
-  @override
-  void initState() {
-    // ignore: todo
-    // TODO: implement initState
-    super.initState();
-    _verifyPhone();
-  }
 }

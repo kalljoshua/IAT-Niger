@@ -1,5 +1,7 @@
-
 import 'package:flutter/material.dart';
+import 'package:iat_nigeria/models/user/numbers.dart';
+import 'package:iat_nigeria/services/user/users_service.dart';
+import 'package:iat_nigeria/services/user/users_service_factory.dart';
 import 'opt.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -9,6 +11,44 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   TextEditingController _controller = TextEditingController();
+  final UsersService usersService = UsersServiceFactory.create();
+  Future<Number> _profile;
+  String contact = '';
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  _getUserProfile() async {
+    setState(() {
+      _profile = usersService.checkUserProfile(_controller.text.toString());
+    });
+    _profile.then(
+      (data) {
+        contact = data.contact;
+        String status = data.status;
+        if (contact != null && status == 'Available')
+          Navigator.of(context).push(
+            MaterialPageRoute(
+                builder: (context) => OTPScreen(_controller.text)),
+          );
+      },
+      onError: (e) {
+        print(e);
+        contact = _controller.text;
+        return MaterialPageRoute(
+          builder: (_) => Scaffold(
+            body: Center(
+              child:
+                  Text('This number $contact is not registered on the network'),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,10 +89,7 @@ class _LoginScreenState extends State<LoginScreen> {
             width: double.infinity,
             child: FlatButton(
               color: Colors.blue,
-              onPressed: () {
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => OTPScreen(_controller.text)));
-              },
+              onPressed: () => _getUserProfile(),
               child: Text(
                 'Next',
                 style: TextStyle(color: Colors.white),

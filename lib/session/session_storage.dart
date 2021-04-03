@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:iat_nigeria/models/user/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SessionStorage {
@@ -19,13 +20,13 @@ class SessionStorage {
     return sharedPreferences.getString('token');
   }
 
-  /* Future<User> getUser() async {
+  Future<User> getUser() async {
     SharedPreferences sharedPreferences = await createSharedPreferences();
     String userJson = sharedPreferences.getString('user');
     Map<String, dynamic> userMap = json.decode(userJson);
     return User.fromJson(userMap);
   }
- */
+ 
   loginStatus() async {
     SharedPreferences sharedPreferences = await createSharedPreferences();
     return sharedPreferences.getString("token") != null ? true : false;

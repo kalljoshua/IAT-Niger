@@ -6,8 +6,8 @@ String basePath = CONFIG_MAP["BASE_PATH"];
 class EndPoints {
   static Urify _urify = new Urify(basePath);
 
-  static Uri getAuthPath() {
-    return _urify.getUri("/api/token");
+  static Uri checkUserAvailable(String userPhone) {
+    return _urify.getUri("/userData/all/checkContact/$userPhone");
   }
 
   static Uri getRegisterUserPath() {
@@ -27,8 +27,8 @@ class EndPoints {
   }
 
   // User
-  static Uri getUserProfile(int userId) {
-    return _urify.getUri("/api/user-profile/$userId");
+  static Uri getUserProfile(String userPhone) {
+    return _urify.getUri("/api/user-profile/$userPhone");
   }
 
   //registration route
