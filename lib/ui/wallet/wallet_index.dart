@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
-import 'ui/index/home_screen.dart';
-import 'ui/transactions/transactions.dart';
+import 'home_screen.dart';
+import '../transactions/transactions.dart';
 
 class WalletIndex extends StatefulWidget {
   @override

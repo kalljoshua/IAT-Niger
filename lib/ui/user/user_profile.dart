@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:iat_nigeria/constants/constants.dart';
+import 'package:iat_nigeria/session/session_storage.dart';
+import 'package:iat_nigeria/ui/auth/sign_in/sign_in.dart';
 import 'package:iat_nigeria/ui/widgets/profile_menu.dart';
 import 'package:iat_nigeria/ui/widgets/profile_pic.dart';
 
@@ -46,7 +48,14 @@ class ProfileScreen extends StatelessWidget {
               ProfileMenu(
                 text: "Log Out",
                 icon: "assets/icons/Log out.svg",
-                press: () {},
+                press: () {
+                  SessionStorage sessionStorage = new SessionStorage();
+                  sessionStorage.logout();
+                  Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(
+                          builder: (BuildContext context) => SignIn()),
+                      (Route<dynamic> route) => false);
+                },
               ),
             ],
           ),

@@ -1,12 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:iat_nigeria/models/user/users_profile.dart';
 import 'package:iat_nigeria/services/user/users_service.dart';
 import 'package:iat_nigeria/services/user/users_service_factory.dart';
+import 'package:iat_nigeria/ui/auth/sign_up/sign_up.dart';
 import 'package:pinput/pin_put/pin_put.dart';
-
-import '../../../wallet_index.dart';
 
 class OTPScreen extends StatefulWidget {
   final String phone;
@@ -75,7 +73,7 @@ class _OTPScreenState extends State<OTPScreen> {
                     if (value.user != null) {
                       Navigator.pushAndRemoveUntil(
                           context,
-                          MaterialPageRoute(builder: (context) => WalletIndex()),
+                          MaterialPageRoute(builder: (context) => SignUpScreen(widget.phone)),
                           (route) => false);
                     }
                   });
@@ -102,7 +100,7 @@ class _OTPScreenState extends State<OTPScreen> {
             if (value.user != null) {
               Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(builder: (context) => WalletIndex()),
+                  MaterialPageRoute(builder: (context) => SignUpScreen(widget.phone)),
                   (route) => false);
             }
           });

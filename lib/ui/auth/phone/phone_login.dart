@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:iat_nigeria/models/user/numbers.dart';
 import 'package:iat_nigeria/services/user/users_service.dart';
 import 'package:iat_nigeria/services/user/users_service_factory.dart';
+import 'package:iat_nigeria/ui/auth/sign_in/sign_in.dart';
+import '../redirect_auth.dart';
 import 'opt.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -28,23 +30,25 @@ class _LoginScreenState extends State<LoginScreen> {
       (data) {
         contact = data.contact;
         String status = data.status;
-        if (contact != null && status == 'Available')
+        if (contact != null && status == 'Available'){
           Navigator.of(context).push(
             MaterialPageRoute(
                 builder: (context) => OTPScreen(_controller.text)),
           );
+          }else if(contact == _controller.text && status == 'Account Exists'){
+            Navigator.of(context).push(
+            MaterialPageRoute(
+                builder: (context) => SignIn()),
+          );
+          }
       },
       onError: (e) {
         print(e);
         contact = _controller.text;
-        return MaterialPageRoute(
-          builder: (_) => Scaffold(
-            body: Center(
-              child:
-                  Text('This number $contact is not registered on the network'),
-            ),
-          ),
-        );
+        return Navigator.of(context).push(
+            MaterialPageRoute(
+                builder: (context) => RediectAuth(_controller.text)),
+          );
       },
     );
   }

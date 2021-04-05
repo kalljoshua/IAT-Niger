@@ -11,15 +11,23 @@ class EndPoints {
   }
 
   static Uri getRegisterUserPath() {
-    return _urify.getUri("/api/register");
+    return _urify.getUri("/user/signUp");
   }
 
-  static Uri getPosts() {
-    return _urify.getUri("/api/posts");
+  static Uri payOttPath() {
+    return _urify.getUri("/payment/buyIat");
   }
 
-  static Uri getUserPosts(int userId) {
-    return _urify.getUri("/api/posts/users/$userId");
+  static Uri getRegisteredUser() {
+    return _urify.getUri("/authenticate/get/token");
+  }
+
+  static Uri getTopupLink(String amount) {
+    return _urify.getUri("/payment/depositFW/$amount");
+  }
+
+  static Uri getUserWallet() {
+    return _urify.getUri("/wallet/myWallet");
   }
 
   static Uri createPost() {
@@ -68,8 +76,8 @@ class EndPoints {
   }
 
   // League routes
-  static Uri getTeams() {
-    return _urify.getUri("/api/teams/");
+  static Uri getIsps() {
+    return _urify.getUri("/isp/getAll");
   }
 
   static Uri getAllFixtures() {

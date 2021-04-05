@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import 'size_config.dart';
 
@@ -36,6 +37,10 @@ const String kNamelNullError = "Please Enter your name";
 const String kPhoneNumberNullError = "Please Enter your phone number";
 const String kAddressNullError = "Please Enter your address";
 const String profile_holder = "assets/images/Profile Image.png";
+
+NumberFormat format = NumberFormat('#,###,###.0');
+
+enum Packages { daily, weekly, monthly, yearly }  
 
 final otpInputDecoration = InputDecoration(
   contentPadding:

@@ -1,10 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:iat_nigeria/constants/size_config.dart';
 import 'package:iat_nigeria/services/auth/auth_service.dart';
 import 'package:iat_nigeria/services/auth/auth_service_factory.dart';
+import 'package:iat_nigeria/ui/wallet/wallet_index.dart';
+import 'package:toast/toast.dart';
+
 
 class SignIn extends StatefulWidget {
+  //final String phone;
+  //SignIn(this.phone);
   @override
   _SignInState createState() => _SignInState();
 }
@@ -36,12 +40,20 @@ class _SignInState extends State<SignIn> {
 
       if (response) {
         print("logged in");
-      } else {
-        print("logged in");
-        /* Toast.show("Failed to Login", context,
+        Toast.show("Login successful", context,
             duration: Toast.LENGTH_LONG,
             gravity: Toast.BOTTOM,
-            backgroundColor: Colors.red); */
+            backgroundColor: Colors.green);
+        Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (BuildContext context) => WalletIndex()));
+      } else {
+        print("login Failed");
+        Toast.show(
+            "Failed to Login, check you credentials and try again", context,
+            duration: Toast.LENGTH_LONG,
+            gravity: Toast.BOTTOM,
+            backgroundColor: Colors.red);
       }
 
       setState(() {
@@ -111,14 +123,14 @@ class _SignInState extends State<SignIn> {
                                             controller: _emailEditingController,
                                             validator: (val) {
                                               return RegExp(
-                                                          r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                                                          r"^(?:[+0]11)?[0-9]{12}$")
                                                       .hasMatch(val)
-                                                  ? null
-                                                  : "Enter correct email";
+                                                  ? "Enter a valid phone number"
+                                                  : null;
                                             },
                                             decoration: InputDecoration(
                                               border: InputBorder.none,
-                                              hintText: 'Email Address',
+                                              hintText: 'Phone Number',
                                               hintStyle:
                                                   TextStyle(color: Colors.grey),
                                             ),
