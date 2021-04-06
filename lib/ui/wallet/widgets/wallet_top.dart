@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:iat_nigeria/constants/constants.dart';
 import 'package:iat_nigeria/services/wallet/model/user_wallet.dart';
 import 'package:iat_nigeria/ui/user/user_profile.dart';
-import 'package:intl/intl.dart';
 
 class WalletData extends StatefulWidget {
   final UserWallet usersWallet;
@@ -47,7 +46,7 @@ class _WalletDataState extends State<WalletData> {
               children: <Widget>[
                 Text(
                   wallet.balance != null
-                      ? "\N " + format.format(wallet.balance).toString()
+                      ? "N " + format.format(wallet.balance).toString()
                       : "0.00",
                   style: TextStyle(
                       color: Colors.blue,

@@ -30,8 +30,12 @@ class EndPoints {
     return _urify.getUri("/wallet/myWallet");
   }
 
-  static Uri createPost() {
-    return _urify.getUri("/api/posts");
+  static Uri getLastPayments() {
+    return _urify.getUri("/payment/myLastPayments");
+  }
+
+  static Uri updatePasswordPath() {
+    return _urify.getUri("/user/changePass");
   }
 
   // User

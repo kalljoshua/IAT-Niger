@@ -1,13 +1,15 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:iat_nigeria/services/transactions/models/last_transaction_data.dart';
+import 'package:iat_nigeria/services/transactions/trans_service_factory.dart';
+import 'package:iat_nigeria/services/transactions/transaction_service.dart';
 import 'package:iat_nigeria/services/wallet/model/flutter_wave.dart';
 import 'package:iat_nigeria/services/wallet/model/user_wallet.dart';
 import 'package:iat_nigeria/services/wallet/wallet_service.dart';
 import 'package:iat_nigeria/services/wallet/wallet_service_factory.dart';
 import 'package:iat_nigeria/session/session_storage.dart';
 import 'package:iat_nigeria/ui/auth/sign_in/sign_in.dart';
-import 'package:iat_nigeria/ui/user/user_profile.dart';
 import 'package:toast/toast.dart';
 import 'pay_ott.dart';
 import 'process_topup.dart';
@@ -26,8 +28,10 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final WalletService usersWallet = WalletServiceFactory.create();
+  final TransactionService lastTransaction = TransactionServiceFactory.create();
   final WalletService topUpLink = WalletServiceFactory.create();
   Future<UserWallet> wallet;
+  Future<List<PaymentsData>> lastTrans;
   Future<FlutterWave> _link;
 
   String link = "";
@@ -41,8 +45,12 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   _getUserWallet() async {
+    Future<List<PaymentsData>> transFuture =
+        lastTransaction.getLastPaymentData();
+
     setState(() {
       wallet = usersWallet.getUserWalletInfo();
+      lastTrans = transFuture;
     });
   }
 
@@ -62,6 +70,10 @@ class _HomeScreenState extends State<HomeScreen> {
       },
       onError: (e) {
         print(e);
+        Toast.show("Service down, try again letter", context,
+            duration: Toast.LENGTH_LONG,
+            gravity: Toast.BOTTOM,
+            backgroundColor: Colors.red);
       },
     );
   }
@@ -91,15 +103,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           usersWallet: userWallet,
                         );
                       } else if (snapshot.hasError) {
-                        Toast.show("Session has Expired", context,
-                            duration: Toast.LENGTH_LONG,
-                            gravity: Toast.BOTTOM,
-                            backgroundColor: Colors.orange);
-
                         SessionStorage sessionStorage = new SessionStorage();
                         sessionStorage.logout();
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (BuildContext context) => SignIn()));
+                        Navigator.pushReplacement( context, MaterialPageRoute( builder: (context) => SignIn()));
                       } else {
                         return Center(child: CircularProgressIndicator());
                       }
@@ -110,12 +116,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     children: <Widget>[
                       GestureDetector(
                         onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  ProfileScreen(),
-                            ),
-                          );
+                          Toast.show("Coming soon", context,
+                              duration: Toast.LENGTH_LONG,
+                              gravity: Toast.BOTTOM,
+                              backgroundColor: Colors.orange);
                         },
                         child: Container(
                           child: Column(
@@ -148,12 +152,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       GestureDetector(
                         onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  ProfileScreen(),
-                            ),
-                          );
+                          Toast.show("Coming soon", context,
+                              duration: Toast.LENGTH_LONG,
+                              gravity: Toast.BOTTOM,
+                              backgroundColor: Colors.orange);
                         },
                         child: Container(
                           child: Column(
@@ -303,7 +305,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         SizedBox(
                           height: 24,
                         ),
-
                         //Container for buttons
                         ButtonsData(),
 
@@ -313,7 +314,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         //Container Listview for expenses and incomes
                         Container(
                           child: Text(
-                            "TODAY",
+                            "Last 5 Payments",
                             style: TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w700,
@@ -326,14 +327,41 @@ class _HomeScreenState extends State<HomeScreen> {
                           height: 16,
                         ),
 
-                        ListView.builder(
-                          itemBuilder: (context, index) {
-                            return TransactionData();
+                        FutureBuilder<List<PaymentsData>>(
+                          future: lastTrans,
+                          builder: (BuildContext context,
+                              AsyncSnapshot<List<PaymentsData>> snapshot) {
+                            if (snapshot.hasData) {
+                              List<PaymentsData> transactions = snapshot.data;
+                              if (snapshot.data.length < 1) {
+                                return Center(
+                                    child: Text('No transactions to display'));
+                              }
+                              return ListView.builder(
+                                primary: false,
+                                shrinkWrap: true,
+                                itemCount: transactions .length,
+                                itemBuilder: (context, position) {
+                                  return InkWell(
+                                    splashColor: Colors.grey[200],
+                                    onTap: () {
+                                      
+                                    },
+                                    child: TransactionData(
+                                        trans: transactions [position]),
+                                  );
+                                },
+                              );
+                            } else if (snapshot.hasError) {
+                              return Text(
+                                  'Error: ' + snapshot.error.toString());
+                            } else {
+                              return Container(
+                                child:
+                                    Center(child: CircularProgressIndicator()),
+                              );
+                            }
                           },
-                          shrinkWrap: true,
-                          itemCount: 2,
-                          padding: EdgeInsets.all(0),
-                          controller: ScrollController(keepScrollOffset: false),
                         ),
 
                         //now expense
@@ -356,7 +384,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           height: 16,
                         ),
 
-                        ListView.builder(
+                        /* ListView.builder(
                           itemBuilder: (context, index) {
                             return TransactionData();
                           },
@@ -364,7 +392,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           itemCount: 2,
                           padding: EdgeInsets.all(0),
                           controller: ScrollController(keepScrollOffset: false),
-                        ),
+                        ), */
 
                         //now expense
                       ],

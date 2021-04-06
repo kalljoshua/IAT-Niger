@@ -100,8 +100,7 @@ class WalletService {
     if (response.statusCode != 200) {  
       print("***Response body: "+response.body);    
       return false;
-    }
-    
+    }    
     //_createUserSession(response.body);
     return true;
   }

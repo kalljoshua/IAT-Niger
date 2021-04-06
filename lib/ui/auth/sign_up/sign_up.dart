@@ -6,10 +6,11 @@ import 'package:iat_nigeria/services/auth/user_signup_data.dart';
 import 'package:iat_nigeria/ui/wallet/wallet_index.dart';
 import 'package:toast/toast.dart';
 
-
 class SignUpScreen extends StatefulWidget {
   final String phone;
+
   SignUpScreen(this.phone);
+
   @override
   _SignUpScreenState createState() => _SignUpScreenState();
 }
@@ -38,8 +39,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
     _enabled = !_enabled;
   }
 
-
-
   signUp() async {
     if (!formKey.currentState.validate()) {
       return;
@@ -56,15 +55,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
 
     var response = await authenticationService.signUpUser(signUpData);
-    print("Renspose code signup: **"+response.toString());
+    print("Renspose code signup: **" + response.toString());
     if (response) {
       Toast.show("Signup succesful", context,
           duration: Toast.LENGTH_LONG,
           gravity: Toast.BOTTOM,
-          backgroundColor: Colors.green);      
-          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (BuildContext context) => WalletIndex()));
+          backgroundColor: Colors.green);
+      Navigator.of(context).push(
+          MaterialPageRoute(builder: (BuildContext context) => WalletIndex()));
     } else {
       Toast.show("Failed to signup", context,
           duration: Toast.LENGTH_LONG,

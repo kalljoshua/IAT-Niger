@@ -5,7 +5,6 @@ import 'package:iat_nigeria/services/auth/auth_service_factory.dart';
 import 'package:iat_nigeria/ui/wallet/wallet_index.dart';
 import 'package:toast/toast.dart';
 
-
 class SignIn extends StatefulWidget {
   //final String phone;
   //SignIn(this.phone);
@@ -44,9 +43,8 @@ class _SignInState extends State<SignIn> {
             duration: Toast.LENGTH_LONG,
             gravity: Toast.BOTTOM,
             backgroundColor: Colors.green);
-        Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (BuildContext context) => WalletIndex()));
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (BuildContext context) => WalletIndex()));
       } else {
         print("login Failed");
         Toast.show(

@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:iat_nigeria/services/wallet/model/flutter_wave.dart';
+import 'package:iat_nigeria/services/wallet/model/user_wallet.dart';
+import 'package:iat_nigeria/services/wallet/wallet_service.dart';
+import 'package:iat_nigeria/services/wallet/wallet_service_factory.dart';
+import 'package:iat_nigeria/ui/wallet/process_topup.dart';
+import 'package:toast/toast.dart';
 
 import 'home_screen.dart';
 import '../transactions/transactions.dart';
@@ -10,6 +16,14 @@ class WalletIndex extends StatefulWidget {
 }
 
 class _WalletIndexState extends State<WalletIndex> {
+  final WalletService usersWallet = WalletServiceFactory.create();
+  final WalletService topUpLink = WalletServiceFactory.create();
+  Future<FlutterWave> _link;
+  Future<UserWallet> wallet;
+
+  String link = "";
+
+  TextEditingController _amountEditingController = new TextEditingController();
 
   static List<Widget> _widgetOptions = <Widget>[
     HomeScreen(),
@@ -17,7 +31,33 @@ class _WalletIndexState extends State<WalletIndex> {
   ]; //screens for each tab
 
   int selectedTab = 0;
-  
+
+  _topUp() async {
+    setState(() {
+      _link = topUpLink.getUserTopLink(_amountEditingController.text);
+    });
+
+    _link.then(
+          (data) {
+        link = data.data.link;
+        if (link != null) {
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => WebViewClass(link)),
+          );
+        }
+        setState(() {
+          wallet = usersWallet.getUserWalletInfo();
+        });
+      },
+      onError: (e) {
+        print(e);
+        Toast.show("Service down, try again letter", context,
+            duration: Toast.LENGTH_LONG,
+            gravity: Toast.BOTTOM,
+            backgroundColor: Colors.red);
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,12 +99,67 @@ class _WalletIndexState extends State<WalletIndex> {
         iconSize: 30,
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: (){},
+        onPressed: (){
+          topUp(context);
+        },
         elevation: 8,
         child: Icon(Icons.add),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       body: _widgetOptions.elementAt(selectedTab),
     );
+  }
+  void topUp(BuildContext ctx) {
+    showModalBottomSheet(
+        isScrollControlled: true,
+        elevation: 5,
+        context: ctx,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
+        builder: (ctx) => Padding(
+          padding: EdgeInsets.only(bottom: 210),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SizedBox(
+                height: 10,
+              ),
+              Text(
+                'Top up',
+                style: TextStyle(color: Colors.black, fontSize: 17),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Container(
+                  height: 50,
+                  alignment: Alignment.center,
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 10, vertical: 10),
+                  margin: const EdgeInsets.symmetric(
+                      horizontal: 10, vertical: 10),
+                  decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.circular(10)),
+                  child: TextField(
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration.collapsed(
+                      hintText: 'Enter amount',
+                    ),
+                    autofocus: true,
+                    controller: _amountEditingController,
+                  )),
+              SizedBox(
+                height: 15,
+              ),
+              ElevatedButton(
+                  onPressed: () {
+                    _topUp();
+                  },
+                  child: Text('Top up'))
+            ],
+          ),
+        ));
   }
 }
