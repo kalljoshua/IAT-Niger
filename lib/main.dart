@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:iat_nigeria/session/session_storage.dart';
+import 'package:iat_nigeria/ui/auth/phone/phone_login.dart';
 import 'package:iat_nigeria/ui/wallet/wallet_index.dart';
 
 import 'ui/auth/sign_in/sign_in.dart';
@@ -48,7 +49,7 @@ class _StartAppState extends State<StartApp> {
       
       home: _isLoggedIn
         ? WalletIndex()
-        : SignIn(),
+        : LoginScreen(),
       debugShowCheckedModeBanner: false,
     );
   }
