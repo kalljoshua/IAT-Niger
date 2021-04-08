@@ -62,4 +62,9 @@ class PaymentsData {
         "status": status,
         "walletId": walletId,
     };
+
+    @override
+  String toString() {
+    return 'PaymentsData{amount: $amount, creationDateTime: $creationDateTime, externalId: $externalId, id: $id, message: $message, paymentDate: $paymentDate, paymentMethod: $paymentMethod, paymentType: $paymentType, ref: $ref, status: $status, walletId: $walletId}';
+  }
 }

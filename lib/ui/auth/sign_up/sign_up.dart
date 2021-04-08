@@ -51,7 +51,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     UserSignUpData signUpData = new UserSignUpData(
       email: emailEditingController.text,
       passWord: passwordEditingController.text,
-      contact: telephoneEditingController.text,
+      contact: widget.phone,
     );
 
     var response = await authenticationService.signUpUser(signUpData);
@@ -81,6 +81,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Sign Up"),
+        backgroundColor: Colors.green,
       ),
       body: Container(
         child: SafeArea(
@@ -190,45 +191,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                     ],
                                   ),
                                 ),
-                                Container(
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                      color: Colors.grey,
-                                      width: 1.0,
-                                    ),
-                                    borderRadius: BorderRadius.circular(20.0),
-                                  ),
-                                  margin: const EdgeInsets.symmetric(
-                                      vertical: 10.0, horizontal: 20.0),
-                                  child: Row(
-                                    children: <Widget>[
-                                      new Expanded(
-                                        child: Padding(
-                                          padding: EdgeInsets.only(left: 20.0),
-                                          child: _enabled
-                                              ? new TextFormField(
-                                                  controller:
-                                                      telephoneEditingController)
-                                              : FocusScope(
-                                                  node: new FocusScopeNode(),
-                                                  child: TextFormField(
-                                                    controller:
-                                                        telephoneEditingController,
-                                                    decoration: InputDecoration(
-                                                      border: InputBorder.none,
-                                                      hintText: _enabled
-                                                          ? 'Telephone'
-                                                          : widget.phone,
-                                                      hintStyle: TextStyle(
-                                                          color: Colors.grey),
-                                                    ),
-                                                  ),
-                                                ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
+
                               ],
                             ),
                           ),
@@ -245,8 +208,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   borderRadius: BorderRadius.circular(30),
                                   gradient: LinearGradient(
                                     colors: [
-                                      const Color(0xfff44336),
-                                      const Color(0xfef45336)
+                                      const Color(0xfe36f44f),
+                                      const Color(0xffbbf436),
+
                                     ],
                                   )),
                               width: MediaQuery.of(context).size.width * 0.65,

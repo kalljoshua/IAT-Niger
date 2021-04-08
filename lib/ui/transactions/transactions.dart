@@ -1,8 +1,37 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:iat_nigeria/services/transactions/models/last_transaction_data.dart';
+import 'package:iat_nigeria/services/transactions/trans_service_factory.dart';
+import 'package:iat_nigeria/services/transactions/transaction_service.dart';
 
+import 'deposit_transactions.dart';
+import 'expense_transactions.dart';
 
-class TransactionIndex extends StatelessWidget {
+class TransactionIndex extends StatefulWidget {
+  @override
+  _TransactionIndexState createState() => _TransactionIndexState();
+}
+
+class _TransactionIndexState extends State<TransactionIndex> {
+  final TransactionService lastTransaction = TransactionServiceFactory.create();
+
+  Future<List<PaymentsData>> lastTrans;
+
+  @override
+  void initState() {
+    super.initState();
+    _getUserTransactions();
+  }
+
+  _getUserTransactions() {
+    Future<List<PaymentsData>> transFuture =
+        lastTransaction.getPaymentData();
+
+    setState(() {
+      lastTrans = transFuture;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -76,7 +105,7 @@ class TransactionIndex extends StatelessWidget {
                             decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius:
-                                BorderRadius.all(Radius.circular(20)),
+                                    BorderRadius.all(Radius.circular(20)),
                                 boxShadow: [
                                   BoxShadow(
                                       color: Colors.grey[200],
@@ -102,7 +131,7 @@ class TransactionIndex extends StatelessWidget {
                             decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius:
-                                BorderRadius.all(Radius.circular(20)),
+                                    BorderRadius.all(Radius.circular(20)),
                                 boxShadow: [
                                   BoxShadow(
                                       color: Colors.grey[200],
@@ -135,82 +164,36 @@ class TransactionIndex extends StatelessWidget {
                     SizedBox(
                       height: 16,
                     ),
-                    ListView.builder(
-                      itemBuilder: (context, index) {
-                        return Container(
-                          margin: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                          padding: EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius:
-                              BorderRadius.all(Radius.circular(10))),
-                          child: Row(
-                            children: <Widget>[
-                              Container(
-                                decoration: BoxDecoration(
-                                    color: Colors.grey[100],
-                                    borderRadius: BorderRadius.all(
-                                        Radius.circular(18))),
-                                child: Icon(
-                                  Icons.date_range,
-                                  color: Colors.lightBlue[900],
-                                ),
-                                padding: EdgeInsets.all(12),
-                              ),
-                              SizedBox(
-                                width: 16,
-                              ),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment:
-                                  CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Text(
-                                      "Payment",
-                                      style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w700,
-                                          color: Colors.grey[900]),
-                                    ),
-                                    Text(
-                                      "Payment to Joshua",
-                                      style: TextStyle(
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.w700,
-                                          color: Colors.grey[500]),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: <Widget>[
-                                  Text(
-                                    "+\$500.5",
-                                    style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w700,
-                                        color: Colors.lightGreen),
-                                  ),
-                                  Text(
-                                    "26 Jan",
-                                    style: TextStyle(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w700,
-                                        color: Colors.grey[500]),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        );
+                    FutureBuilder<List<PaymentsData>>(
+                      future: lastTrans,
+                      builder: (BuildContext context,
+                          AsyncSnapshot<List<PaymentsData>> snapshot) {
+                        if (snapshot.hasData) {
+                          List<PaymentsData> depositTransactions = snapshot.data;
+                          if (snapshot.data.length < 1) {
+                            return Center(
+                                child: Text('No transactions to display'));
+                          }
+                          return ListView.builder(
+                            itemBuilder: (context, index) {
+                              return DepositTransaction(deposit: depositTransactions [index]);
+                            },
+                            primary: false,
+                            shrinkWrap: true,
+                            itemCount: depositTransactions .length,
+                            padding: EdgeInsets.all(0),
+                            controller:
+                                ScrollController(keepScrollOffset: false),
+                          );
+                        } else if (snapshot.hasError) {
+                          return Text('Error: ' + snapshot.error.toString());
+                        } else {
+                          return Container(
+                            child: Center(child: CircularProgressIndicator()),
+                          );
+                        }
                       },
-                      shrinkWrap: true,
-                      itemCount: 3,
-                      padding: EdgeInsets.all(0),
-                      controller: ScrollController(keepScrollOffset: false),
                     ),
-
                     SizedBox(
                       height: 16,
                     ),
@@ -230,86 +213,40 @@ class TransactionIndex extends StatelessWidget {
                       height: 16,
                     ),
 
-                    ListView.builder(
-                      itemBuilder: (context, index) {
-                        return Container(
-                          margin: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                          padding: EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius:
-                              BorderRadius.all(Radius.circular(10))),
-                          child: Row(
-                            children: <Widget>[
-                              Container(
-                                decoration: BoxDecoration(
-                                    color: Colors.grey[100],
-                                    borderRadius: BorderRadius.all(
-                                        Radius.circular(18))),
-                                child: Icon(
-                                  Icons.phone_android_sharp,
-                                  color: Colors.lightBlue[900],
-                                ),
-                                padding: EdgeInsets.all(12),
-                              ),
-                              SizedBox(
-                                width: 16,
-                              ),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment:
-                                  CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Text(
-                                      "OTT Payment",
-                                      style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w700,
-                                          color: Colors.grey[900]),
-                                    ),
-                                    Text(
-                                      "Payment to MTN",
-                                      style: TextStyle(
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.w700,
-                                          color: Colors.grey[500]),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: <Widget>[
-                                  Text(
-                                    "-\$500.5",
-                                    style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w700,
-                                        color: Colors.orange),
-                                  ),
-                                  Text(
-                                    "26 Jan",
-                                    style: TextStyle(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w700,
-                                        color: Colors.grey[500]),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        );
+                    FutureBuilder<List<PaymentsData>>(
+                      future: lastTrans,
+                      builder: (BuildContext context,
+                          AsyncSnapshot<List<PaymentsData>> snapshot) {
+                        if (snapshot.hasData) {
+                          List<PaymentsData> transactions = snapshot.data;
+                          if (snapshot.data.length < 1) {
+                            return Center(
+                                child: Text('No transactions to display'));
+                          }
+                          return ListView.builder(
+                            itemBuilder: (context, index) {
+                              return ExpenseTransaction(trans: transactions [index]);
+                            },
+                            primary: false,
+                            shrinkWrap: true,
+                            itemCount: transactions .length,
+                            padding: EdgeInsets.all(0),
+                            controller:
+                            ScrollController(keepScrollOffset: false),
+                          );
+                        } else if (snapshot.hasError) {
+                          return Text('Error: ' + snapshot.error.toString());
+                        } else {
+                          return Container(
+                            child: Center(child: CircularProgressIndicator()),
+                          );
+                        }
                       },
-                      shrinkWrap: true,
-                      itemCount: 3,
-                      padding: EdgeInsets.all(0),
-                      controller: ScrollController(keepScrollOffset: false),
                     ),
 
                     SizedBox(
                       height: 16,
                     ),
-
                   ],
                 ),
               ),
@@ -325,6 +262,5 @@ class TransactionIndex extends StatelessWidget {
         ),
       ),
     );
-
   }
 }

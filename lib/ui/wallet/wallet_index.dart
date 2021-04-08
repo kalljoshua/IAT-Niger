@@ -70,7 +70,7 @@ class _WalletIndexState extends State<WalletIndex> {
             color: Colors.black,),
             activeIcon: Icon(
                 Icons.home,
-                color: Colors.blue,
+                color: Colors.green,
               ),
             label: "Home",
           ),
@@ -82,7 +82,7 @@ class _WalletIndexState extends State<WalletIndex> {
               ),
               activeIcon: Icon(
                 Icons.list_outlined,
-                color: Colors.blue,
+                color: Colors.green,
               ),
               label: "Transactions",
           ),
@@ -92,7 +92,7 @@ class _WalletIndexState extends State<WalletIndex> {
             selectedTab = index;
           });
         },
-        selectedItemColor: Colors.blue,
+        selectedItemColor: Colors.green,
         currentIndex: selectedTab,
         showUnselectedLabels: true,
         elevation: 5,
@@ -102,6 +102,7 @@ class _WalletIndexState extends State<WalletIndex> {
         onPressed: (){
           topUp(context);
         },
+        backgroundColor: Colors.green,
         elevation: 8,
         child: Icon(Icons.add),
       ),

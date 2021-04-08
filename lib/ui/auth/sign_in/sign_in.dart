@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:iat_nigeria/services/auth/auth_service.dart';
 import 'package:iat_nigeria/services/auth/auth_service_factory.dart';
+import 'package:iat_nigeria/session/session_storage.dart';
 import 'package:iat_nigeria/ui/wallet/wallet_index.dart';
 import 'package:toast/toast.dart';
 
@@ -26,6 +27,16 @@ class _SignInState extends State<SignIn> {
   String username;
   String password;
 
+ /* @override
+  void initState() {
+    super.initState();
+    _logout();
+  }
+  _logout(){
+    SessionStorage sessionStorage = new SessionStorage();
+    sessionStorage.logout();
+  }
+*/
   signIn() async {
     if (formKey.currentState.validate()) {
       setState(() {
@@ -70,6 +81,7 @@ class _SignInState extends State<SignIn> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Sign In"),
+        backgroundColor: Colors.green,
       ),
       body: Container(
         child: SafeArea(
@@ -190,8 +202,8 @@ class _SignInState extends State<SignIn> {
                                   borderRadius: BorderRadius.circular(30),
                                   gradient: LinearGradient(
                                     colors: [
-                                      const Color(0xfff44336),
-                                      const Color(0xfef45336)
+                                      const Color(0xfe36f44f),
+                                      const Color(0xffbbf436),
                                     ],
                                   )),
                               width: MediaQuery.of(context).size.width * 0.65,

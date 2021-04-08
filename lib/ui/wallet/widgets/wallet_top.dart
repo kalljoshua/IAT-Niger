@@ -49,7 +49,7 @@ class _WalletDataState extends State<WalletData> {
                       ? "N " + format.format(wallet.balance).toString()
                       : "0.00",
                   style: TextStyle(
-                      color: Colors.blue,
+                      color: Colors.green,
                       fontSize: 36,
                       fontWeight: FontWeight.w700),
                 ),

@@ -50,6 +50,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
           duration: Toast.LENGTH_LONG,
           gravity: Toast.BOTTOM,
           backgroundColor: Colors.green);
+      SessionStorage sessionStorage = new SessionStorage();
+      sessionStorage.logout();
+      Navigator.of(context).push(MaterialPageRoute(
+          builder: (BuildContext context) => SignIn()));
     } else {
       Toast.show("Failed to update Password", context,
           duration: Toast.LENGTH_LONG,
@@ -79,7 +83,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ProfileMenu(
                 text: "My Account",
                 icon: "assets/icons/User Icon.svg",
-                press: () => {_profileDisplay(context)},
+                press: () => {
+                  //_profileDisplay(context)
+                  Toast.show("Coming soon", context,
+                      duration: Toast.LENGTH_LONG,
+                      gravity: Toast.BOTTOM,
+                      backgroundColor: Colors.orange)
+                },
               ),
               ProfileMenu(
                 text: "Notifications",
@@ -179,7 +189,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         decoration: InputDecoration.collapsed(
                           hintText: 'Old Password',
                         ),
-                        autofocus: true,
                         controller: _oldpassEditingController,
                         validator: (val) {
                           return val.length < 6
@@ -200,10 +209,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           borderRadius: BorderRadius.circular(10)),
                       child: TextFormField(
                         keyboardType: TextInputType.text,
+                        obscureText: true,
                         decoration: InputDecoration.collapsed(
                           hintText: 'New Password',
                         ),
-                        autofocus: true,
                         controller: _newpassEditingController,
                         validator: (val) {
                           return val.length < 6
@@ -227,7 +236,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         decoration: InputDecoration.collapsed(
                           hintText: 'Confirm Password',
                         ),
-                        autofocus: true,
+                        obscureText: true,
                         controller: _confirmpassEditingController,
                         validator: (val) {
                           return val.length < 6

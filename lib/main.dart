@@ -26,6 +26,7 @@ class _StartAppState extends State<StartApp> {
   void initState() {
     super.initState();
     navigationToNextPage();
+    //dispose();
   }
 
   Future<void> navigationToNextPage() async {

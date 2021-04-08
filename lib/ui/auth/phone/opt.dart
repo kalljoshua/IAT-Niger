@@ -8,7 +8,8 @@ import 'package:pinput/pin_put/pin_put.dart';
 
 class OTPScreen extends StatefulWidget {
   final String phone;
-  OTPScreen(this.phone);
+  final String code;
+  OTPScreen(this.phone, this.code);
   @override
   _OTPScreenState createState() => _OTPScreenState();
 }
@@ -39,6 +40,7 @@ class _OTPScreenState extends State<OTPScreen> {
       key: _scaffoldkey,
       appBar: AppBar(
         title: Text('OTP Verification'),
+        backgroundColor: Colors.green,
       ),
       body: Column(
         children: [
@@ -46,7 +48,7 @@ class _OTPScreenState extends State<OTPScreen> {
             margin: EdgeInsets.only(top: 40),
             child: Center(
               child: Text(
-                'Verify +256-${widget.phone}',
+                'Verify ${widget.code}-${widget.phone}',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 26),
               ),
             ),
@@ -92,7 +94,7 @@ class _OTPScreenState extends State<OTPScreen> {
 
   _verifyPhone() async {
     await FirebaseAuth.instance.verifyPhoneNumber(
-        phoneNumber: '+256${widget.phone}',
+        phoneNumber: '${widget.code}${widget.phone}',
         verificationCompleted: (PhoneAuthCredential credential) async {
           await FirebaseAuth.instance
               .signInWithCredential(credential)

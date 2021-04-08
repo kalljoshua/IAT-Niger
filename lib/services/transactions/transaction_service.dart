@@ -37,4 +37,24 @@ class TransactionService {
       throw Exception('Failed to load transactions');
     }
   }
+
+  Future<List<PaymentsData>> getPaymentData() async {
+    String userToken = await sessionStorage.getToken();
+    Map<String, String> headers = {
+      HttpHeaders.authorizationHeader: 'Bearer $userToken',
+      'Content-Type': 'application/json; charset=UTF-8'
+    };
+
+    final response =
+    await client.get(EndPoints.getPayments(), headers: headers);
+
+    if (response.statusCode == 200) {
+      print('RESPONSE** ' + response.body);
+      List<PaymentsData> transactionList = paymentsDataFromJson(response.body);
+      return transactionList;
+    } else {
+      // If that call was not successful, throw an error.
+      throw Exception('Failed to load transactions');
+    }
+  }
 }

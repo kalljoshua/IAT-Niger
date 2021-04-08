@@ -107,7 +107,7 @@ class _PayOTTState extends State<PayOTT> {
               children: [
                 SizedBox(height: size.height * 0.05),
                 Text(
-                  "Pay OTT",
+                  "Pay IAT",
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 28,

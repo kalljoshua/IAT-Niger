@@ -1,32 +1,38 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:iat_nigeria/constants/constants.dart';
-import 'package:iat_nigeria/services/transactions/models/last_transaction_data.dart';
-import 'package:iat_nigeria/ui/widgets/widget.dart';
+import 'package:iat_nigeria/services/iat/models/iat_data.dart';
+import 'package:intl/intl.dart';
 
-class ExpenseTransaction extends StatefulWidget {
-  final PaymentsData trans;
+class OttSubscription extends StatefulWidget {
+  final IatData iatSubscription;
 
-  const ExpenseTransaction({Key key, this.trans}) : super(key: key);
+  const OttSubscription({Key key, this.iatSubscription}) : super(key: key);
 
   @override
-  _ExpenseTransactionState createState() => _ExpenseTransactionState();
+  _OttSubscriptionState createState() => _OttSubscriptionState();
 }
 
-class _ExpenseTransactionState extends State<ExpenseTransaction> {
-  PaymentsData transaction;
+class _OttSubscriptionState extends State<OttSubscription> {
+  IatData iat;
 
   @override
   void initState() {
     super.initState();
-    _filterTransactions();
+    //currency();
+    setState(() {
+      iat = widget.iatSubscription;
+    });
   }
 
-  _filterTransactions() {
-    if (widget.trans.amount <= 0) {
-      setState(() {
-        transaction = widget.trans;
-      });
+  _date() {
+    if (iat != null) {
+      DateTime dateTimeCreatedAt = DateTime.parse(iat.expireAt);
+      DateTime dateTimeNow = DateTime.now();
+      final differenceInDays = dateTimeNow.difference(dateTimeCreatedAt).inDays;
+
+      print('Difference in adys: $differenceInDays');
+      return differenceInDays;
+      //print('$differenceInDays');
     }
   }
 
@@ -45,7 +51,7 @@ class _ExpenseTransactionState extends State<ExpenseTransaction> {
                 color: Colors.grey[100],
                 borderRadius: BorderRadius.all(Radius.circular(18))),
             child: Icon(
-              Icons.phone_android_sharp,
+              Icons.public,
               color: Colors.lightBlue[900],
             ),
             padding: EdgeInsets.all(12),
@@ -58,18 +64,14 @@ class _ExpenseTransactionState extends State<ExpenseTransaction> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  transaction != null
-                      ? '${transaction.paymentMethod}'
-                      : "Expense",
+                  iat != null ? iat.contact.toString() : "Expense",
                   style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
                       color: Colors.grey[900]),
                 ),
                 Text(
-                  transaction != null
-                      ? '${transaction.message}'
-                      : "Narrative",
+                  iat != null ? DateFormat('yyyy-MM-dd - kk:mm').format(DateTime.parse(iat.expireAt)) : "Narrative",
                   style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w700,
@@ -82,18 +84,7 @@ class _ExpenseTransactionState extends State<ExpenseTransaction> {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: <Widget>[
               Text(
-                transaction != null
-                    ? "-\N " + format.format(transaction.amount.abs()).toString()
-                    : "N 00.0",
-                style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.orange),
-              ),
-              Text(
-                transaction != null
-                    ? parseHumanDateTime(transaction.paymentDate)
-                    : "Date",
+                iat != null ? _date().abs().toString()+" Days" : "Days",
                 style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w700,

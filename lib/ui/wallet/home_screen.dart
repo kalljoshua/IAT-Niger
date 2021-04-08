@@ -1,6 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:iat_nigeria/services/iat/iat_service.dart';
+import 'package:iat_nigeria/services/iat/iat_service_factory.dart';
+import 'package:iat_nigeria/services/iat/models/iat_data.dart';
 import 'package:iat_nigeria/services/transactions/models/last_transaction_data.dart';
 import 'package:iat_nigeria/services/transactions/trans_service_factory.dart';
 import 'package:iat_nigeria/services/transactions/transaction_service.dart';
@@ -10,7 +13,9 @@ import 'package:iat_nigeria/services/wallet/wallet_service.dart';
 import 'package:iat_nigeria/services/wallet/wallet_service_factory.dart';
 import 'package:iat_nigeria/session/session_storage.dart';
 import 'package:iat_nigeria/ui/auth/sign_in/sign_in.dart';
+import 'package:iat_nigeria/ui/wallet/widgets/ott_subscription.dart';
 import 'package:toast/toast.dart';
+import '../../main.dart';
 import 'pay_ott.dart';
 import 'process_topup.dart';
 import 'widgets/buttons.dart';
@@ -28,9 +33,11 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final WalletService usersWallet = WalletServiceFactory.create();
+  final IatService usersIat = IatServiceFactory.create();
   final TransactionService lastTransaction = TransactionServiceFactory.create();
   final WalletService topUpLink = WalletServiceFactory.create();
   Future<UserWallet> wallet;
+  Future<IatData> iat;
   Future<List<PaymentsData>> lastTrans;
   Future<FlutterWave> _link;
 
@@ -50,6 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     setState(() {
       wallet = usersWallet.getUserWalletInfo();
+      iat = usersIat.getUserIatInfo();
       lastTrans = transFuture;
     });
   }
@@ -114,6 +122,79 @@ class _HomeScreenState extends State<HomeScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
+
+                      GestureDetector(
+                        onTap: () {
+                          topUp(context);
+                        },
+                        child: Container(
+                          child: Column(
+                            children: <Widget>[
+                              Container(
+                                decoration: BoxDecoration(
+                                    color: Color.fromRGBO(243, 245, 248, 1),
+                                    borderRadius:
+                                    BorderRadius.all(Radius.circular(18))),
+                                child: Icon(
+                                  Icons.trending_down,
+                                  color: Colors.green[900],
+                                  size: 30,
+                                ),
+                                padding: EdgeInsets.all(12),
+                              ),
+                              SizedBox(
+                                height: 4,
+                              ),
+                              Text(
+                                "Topup",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 14,
+                                    color: Colors.black),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (BuildContext context) => PayOTT(),
+                            ),
+                          );
+                        },
+                        child: Container(
+                          child: Column(
+                            children: <Widget>[
+                              Container(
+                                decoration: BoxDecoration(
+                                    color: Color.fromRGBO(243, 245, 248, 1),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(18))),
+                                child: Icon(
+                                  Icons.phone_android_sharp,
+                                  color: Colors.green[900],
+                                  size: 30,
+                                ),
+                                padding: EdgeInsets.all(12),
+                              ),
+                              SizedBox(
+                                height: 4,
+                              ),
+                              Text(
+                                "Pay IAT",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 14,
+                                    color: Colors.black),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+
                       GestureDetector(
                         onTap: () {
                           Toast.show("Coming soon", context,
@@ -128,10 +209,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                 decoration: BoxDecoration(
                                     color: Color.fromRGBO(243, 245, 248, 1),
                                     borderRadius:
-                                        BorderRadius.all(Radius.circular(18))),
+                                    BorderRadius.all(Radius.circular(18))),
                                 child: Icon(
                                   Icons.date_range,
-                                  color: Colors.blue[900],
+                                  color: Colors.green[900],
                                   size: 30,
                                 ),
                                 padding: EdgeInsets.all(12),
@@ -164,10 +245,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                 decoration: BoxDecoration(
                                     color: Color.fromRGBO(243, 245, 248, 1),
                                     borderRadius:
-                                        BorderRadius.all(Radius.circular(18))),
+                                    BorderRadius.all(Radius.circular(18))),
                                 child: Icon(
                                   Icons.public,
-                                  color: Colors.blue[900],
+                                  color: Colors.green[900],
                                   size: 30,
                                 ),
                                 padding: EdgeInsets.all(12),
@@ -186,76 +267,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                       ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (BuildContext context) => PayOTT(),
-                            ),
-                          );
-                        },
-                        child: Container(
-                          child: Column(
-                            children: <Widget>[
-                              Container(
-                                decoration: BoxDecoration(
-                                    color: Color.fromRGBO(243, 245, 248, 1),
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(18))),
-                                child: Icon(
-                                  Icons.phone_android_sharp,
-                                  color: Colors.blue[900],
-                                  size: 30,
-                                ),
-                                padding: EdgeInsets.all(12),
-                              ),
-                              SizedBox(
-                                height: 4,
-                              ),
-                              Text(
-                                "Pay OTT",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 14,
-                                    color: Colors.black),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          topUp(context);
-                        },
-                        child: Container(
-                          child: Column(
-                            children: <Widget>[
-                              Container(
-                                decoration: BoxDecoration(
-                                    color: Color.fromRGBO(243, 245, 248, 1),
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(18))),
-                                child: Icon(
-                                  Icons.trending_down,
-                                  color: Colors.blue[900],
-                                  size: 30,
-                                ),
-                                padding: EdgeInsets.all(12),
-                              ),
-                              SizedBox(
-                                height: 4,
-                              ),
-                              Text(
-                                "Topup",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 14,
-                                    color: Colors.black),
-                              ),
-                            ],
-                          ),
-                        ),
-                      )
                     ],
                   ),
                 ],
@@ -279,6 +290,48 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: <Widget>[
                         SizedBox(
                           height: 24,
+                        ),
+
+                        Container(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Text(
+                                "Running IAT Subscription",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w900,
+                                    fontSize: 16,
+                                    color: Colors.black),
+                              ),
+
+                            ],
+                          ),
+                          padding: EdgeInsets.symmetric(horizontal: 32),
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        FutureBuilder<IatData>(
+                          future: iat,
+                          // ignore: missing_return
+                          builder: (BuildContext context,
+                              AsyncSnapshot<IatData> snapshot) {
+                            if (snapshot.hasData) {
+                              IatData userIat = snapshot.data;
+                              return OttSubscription(
+                                iatSubscription: userIat,
+                              );
+                            } else if (snapshot.hasError) {
+                              SessionStorage sessionStorage = new SessionStorage();
+                              sessionStorage.logout();
+                              Navigator.pushReplacement( context, MaterialPageRoute( builder: (context) => StartApp()));
+                            } else {
+                              return Center(child: CircularProgressIndicator());
+                            }
+                          },
+                        ),
+                        SizedBox(
+                          width: 10,
                         ),
                         Container(
                           child: Row(
@@ -324,7 +377,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
 
                         SizedBox(
-                          height: 16,
+                          height: 10,
                         ),
 
                         FutureBuilder<List<PaymentsData>>(
@@ -371,7 +424,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                         Container(
                           child: Text(
-                            "YESTERDAY",
+                            "",
                             style: TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w700,

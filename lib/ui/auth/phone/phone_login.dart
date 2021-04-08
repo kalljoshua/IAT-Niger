@@ -30,34 +30,37 @@ class _LoginScreenState extends State<LoginScreen> {
       (data) {
         contact = data.contact;
         String status = data.status;
-        if (contact != null && status == 'Available'){
+        if (contact == _controller.text && status == 'Available') {
           Navigator.of(context).push(
             MaterialPageRoute(
-                builder: (context) => OTPScreen(_controller.text)),
+                builder: (context) => OTPScreen(_controller.text, code)),
           );
-          }else if(contact == _controller.text && status == 'Account Exists'){
-            Navigator.of(context).push(
-            MaterialPageRoute(
-                builder: (context) => SignIn()),
+        } else if (contact == _controller.text && status == 'Account Exists') {
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => SignIn()),
           );
-          }
+        }
       },
       onError: (e) {
         print(e);
         contact = _controller.text;
         return Navigator.of(context).push(
-            MaterialPageRoute(
-                builder: (context) => RediectAuth(_controller.text)),
-          );
+          MaterialPageRoute(
+              builder: (context) => RediectAuth(_controller.text, code)),
+        );
       },
     );
   }
+
+  List<String> _values = <String>['+234', '+256'];
+  String code = '+234';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Phone Auth'),
+        title: Text('Phone Authentication'),
+        backgroundColor: Colors.green,
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -74,17 +77,43 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             Container(
               margin: EdgeInsets.only(top: 40, right: 10, left: 10),
-              child: TextField(
-                decoration: InputDecoration(
-                  hintText: 'Phone Number',
-                  prefix: Padding(
-                    padding: EdgeInsets.all(4),
-                    child: Text('+256'),
+              child: Row(
+                mainAxisSize: MainAxisSize.min, // see 3
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Flexible(
+                    flex: 1,
+                    child: DropdownButtonFormField(
+                      decoration:
+                          InputDecoration(contentPadding: EdgeInsets.all(0.0)),
+                      value: code,
+                      items: ['+234', '+256']
+                          .map((String unit) => DropdownMenuItem<String>(
+                              value: unit, child: Text(unit)))
+                          .toList(),
+                      onChanged: (value) => setState(
+                        () {
+                          code = value;
+                        },
+                      ),
+                    ),
                   ),
-                ),
-                maxLength: 10,
-                keyboardType: TextInputType.number,
-                controller: _controller,
+                  SizedBox(width: 10,),
+                  Flexible(
+                    flex: 3,
+                    child: TextField(
+                      decoration: InputDecoration(
+                        hintText: '0700000000',
+                        prefix: Padding(
+                          padding: EdgeInsets.all(4),
+                        ),
+                      ),
+                      maxLength: 10,
+                      keyboardType: TextInputType.number,
+                      controller: _controller,
+                    ),
+                  ),
+                ],
               ),
             )
           ]),
@@ -92,7 +121,7 @@ class _LoginScreenState extends State<LoginScreen> {
             margin: EdgeInsets.all(10),
             width: double.infinity,
             child: FlatButton(
-              color: Colors.blue,
+              color: Colors.green,
               onPressed: () => _getUserProfile(),
               child: Text(
                 'Next',
