@@ -4,6 +4,8 @@ import 'package:iat_nigeria/services/wallet/model/flutter_wave.dart';
 import 'package:iat_nigeria/services/wallet/model/user_wallet.dart';
 import 'package:iat_nigeria/services/wallet/wallet_service.dart';
 import 'package:iat_nigeria/services/wallet/wallet_service_factory.dart';
+import 'package:iat_nigeria/session/session_storage.dart';
+import 'package:iat_nigeria/ui/auth/sign_in/sign_in.dart';
 import 'package:iat_nigeria/ui/wallet/process_topup.dart';
 import 'package:toast/toast.dart';
 
@@ -22,6 +24,7 @@ class _WalletIndexState extends State<WalletIndex> {
   Future<UserWallet> wallet;
 
   String link = "";
+  bool _isLoggedIn = false;
 
   TextEditingController _amountEditingController = new TextEditingController();
 
@@ -31,6 +34,21 @@ class _WalletIndexState extends State<WalletIndex> {
   ]; //screens for each tab
 
   int selectedTab = 0;
+
+  Future<void> navigationToNextPage() async {
+    SessionStorage sessionStorage = new SessionStorage();
+    var isLoggedIn = await sessionStorage.loginStatus();
+    if (isLoggedIn) {
+      setState(() {
+        _isLoggedIn = true;
+      });
+    }
+
+    if(_isLoggedIn == false){
+      sessionStorage.logout();
+      Navigator.pushReplacement( context, MaterialPageRoute( builder: (context) => SignIn()));
+    }
+  }
 
   _topUp() async {
     setState(() {

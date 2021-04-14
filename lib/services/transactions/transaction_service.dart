@@ -34,7 +34,7 @@ class TransactionService {
       return transactionList;
     } else {
       // If that call was not successful, throw an error.
-      throw Exception('Failed to load transactions');
+      throw Exception(jsonDecode(response.body)['message']);
     }
   }
 
@@ -54,7 +54,7 @@ class TransactionService {
       return transactionList;
     } else {
       // If that call was not successful, throw an error.
-      throw Exception('Failed to load transactions');
+      throw Exception(jsonDecode(response.body)['message']);
     }
   }
 }

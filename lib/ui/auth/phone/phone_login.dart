@@ -3,6 +3,7 @@ import 'package:iat_nigeria/models/user/numbers.dart';
 import 'package:iat_nigeria/services/user/users_service.dart';
 import 'package:iat_nigeria/services/user/users_service_factory.dart';
 import 'package:iat_nigeria/ui/auth/sign_in/sign_in.dart';
+import '../../../constants/constants.dart';
 import '../redirect_auth.dart';
 import 'opt.dart';
 
@@ -60,7 +61,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Phone Authentication'),
-        backgroundColor: Colors.green,
+        backgroundColor: themeColor,
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -121,10 +122,10 @@ class _LoginScreenState extends State<LoginScreen> {
             margin: EdgeInsets.all(10),
             width: double.infinity,
             child: FlatButton(
-              color: Colors.green,
+              color: themeColor,
               onPressed: () => _getUserProfile(),
               child: Text(
-                'Next',
+                'Verify',
                 style: TextStyle(color: Colors.white),
               ),
             ),

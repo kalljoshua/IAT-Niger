@@ -26,6 +26,10 @@ class EndPoints {
     return _urify.getUri("/payment/depositFW/$amount");
   }
 
+  static Uri sendWalletMoney(String amount, String phone) {
+    return _urify.getUri("/payment/transfer/$amount/$phone");
+  }
+
   static Uri getUserWallet() {
     return _urify.getUri("/wallet/myWallet");
   }

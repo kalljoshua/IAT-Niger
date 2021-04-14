@@ -1,17 +1,17 @@
 import 'dart:convert';
 
-Jwt jwtFromJson(String str) => Jwt.fromJson(json.decode(str));
+JwtToken jwtFromJson(String str) => JwtToken.fromJson(json.decode(str));
 
-String jwtToJson(Jwt data) => json.encode(data.toJson());
+String jwtToJson(JwtToken data) => json.encode(data.toJson());
 
-class Jwt {
-    Jwt({
+class JwtToken {
+    JwtToken({
         this.jwt,
     });
 
     String jwt;
 
-    factory Jwt.fromJson(Map<String, dynamic> json) => Jwt(
+    factory JwtToken.fromJson(Map<String, dynamic> json) => JwtToken(
         jwt: json["jwt"],
     );
 

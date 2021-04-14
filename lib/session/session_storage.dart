@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:iat_nigeria/models/user/user.dart';
+import 'package:jwt_decode/jwt_decode.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SessionStorage {
@@ -26,10 +27,23 @@ class SessionStorage {
     Map<String, dynamic> userMap = json.decode(userJson);
     return User.fromJson(userMap);
   }
- 
+
   loginStatus() async {
     SharedPreferences sharedPreferences = await createSharedPreferences();
-    return sharedPreferences.getString("token") != null ? true : false;
+    var token = sharedPreferences.getString("token");
+    //DateTime expiryDate = Jwt.getExpiryDate(token);
+    if (token != null) {
+      bool isExpired = Jwt.isExpired(token);
+      if (token != null && isExpired) {
+        logout();
+        return sharedPreferences.getString("token") != null ? true : false;
+      } else {
+        print("***Token Expired: " + token);
+        return sharedPreferences.getString("token") != null ? true : false;
+      }
+    } else {
+      return sharedPreferences.getString("token") != null ? true : false;
+    }
   }
 
   void logout() async {

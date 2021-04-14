@@ -6,6 +6,8 @@ import 'package:iat_nigeria/services/user/users_service_factory.dart';
 import 'package:iat_nigeria/ui/auth/sign_up/sign_up.dart';
 import 'package:pinput/pin_put/pin_put.dart';
 
+import '../../../constants/constants.dart';
+
 class OTPScreen extends StatefulWidget {
   final String phone;
   final String code;
@@ -40,7 +42,7 @@ class _OTPScreenState extends State<OTPScreen> {
       key: _scaffoldkey,
       appBar: AppBar(
         title: Text('OTP Verification'),
-        backgroundColor: Colors.green,
+        backgroundColor: themeColor,
       ),
       body: Column(
         children: [

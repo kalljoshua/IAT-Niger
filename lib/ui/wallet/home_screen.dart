@@ -13,9 +13,9 @@ import 'package:iat_nigeria/services/wallet/wallet_service.dart';
 import 'package:iat_nigeria/services/wallet/wallet_service_factory.dart';
 import 'package:iat_nigeria/session/session_storage.dart';
 import 'package:iat_nigeria/ui/auth/sign_in/sign_in.dart';
+import 'package:iat_nigeria/ui/wallet/send_money.dart';
 import 'package:iat_nigeria/ui/wallet/widgets/ott_subscription.dart';
 import 'package:toast/toast.dart';
-import '../../main.dart';
 import 'pay_ott.dart';
 import 'process_topup.dart';
 import 'widgets/buttons.dart';
@@ -43,6 +43,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   String link = "";
 
+  bool _isLoggedIn = false;
+
+  SessionStorage sessionStorage = new SessionStorage();
+
   TextEditingController _amountEditingController = new TextEditingController();
 
   @override
@@ -55,6 +59,16 @@ class _HomeScreenState extends State<HomeScreen> {
     Future<List<PaymentsData>> transFuture =
         lastTransaction.getLastPaymentData();
 
+    var isLoggedIn = await sessionStorage.loginStatus();
+    if (isLoggedIn) {
+      setState(() {
+        _isLoggedIn = true;
+      });
+    }
+    if (_isLoggedIn == false) {
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => SignIn()));
+    }
     setState(() {
       wallet = usersWallet.getUserWalletInfo();
       iat = usersIat.getUserIatInfo();
@@ -105,15 +119,23 @@ class _HomeScreenState extends State<HomeScreen> {
                     // ignore: missing_return
                     builder: (BuildContext context,
                         AsyncSnapshot<UserWallet> snapshot) {
+                      /*if (!snapshot.hasData) {
+                        // show loading while waiting for real data
+                        return CircularProgressIndicator();
+                      }*/
                       if (snapshot.hasData) {
                         UserWallet userWallet = snapshot.data;
                         return WalletData(
                           usersWallet: userWallet,
                         );
                       } else if (snapshot.hasError) {
-                        SessionStorage sessionStorage = new SessionStorage();
-                        sessionStorage.logout();
-                        Navigator.pushReplacement( context, MaterialPageRoute( builder: (context) => SignIn()));
+                        return Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child: Center(
+                            child: Text(
+                                "Failed To fetch data, Please check your internet connection"),
+                          ),
+                        );
                       } else {
                         return Center(child: CircularProgressIndicator());
                       }
@@ -122,7 +144,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-
                       GestureDetector(
                         onTap: () {
                           topUp(context);
@@ -134,7 +155,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 decoration: BoxDecoration(
                                     color: Color.fromRGBO(243, 245, 248, 1),
                                     borderRadius:
-                                    BorderRadius.all(Radius.circular(18))),
+                                        BorderRadius.all(Radius.circular(18))),
                                 child: Icon(
                                   Icons.trending_down,
                                   color: Colors.green[900],
@@ -156,7 +177,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                       ),
-
                       GestureDetector(
                         onTap: () {
                           Navigator.of(context).push(
@@ -194,13 +214,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                       ),
-
                       GestureDetector(
                         onTap: () {
-                          Toast.show("Coming soon", context,
-                              duration: Toast.LENGTH_LONG,
-                              gravity: Toast.BOTTOM,
-                              backgroundColor: Colors.orange);
+                          _sendMoney(context);
                         },
                         child: Container(
                           child: Column(
@@ -209,9 +225,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                 decoration: BoxDecoration(
                                     color: Color.fromRGBO(243, 245, 248, 1),
                                     borderRadius:
-                                    BorderRadius.all(Radius.circular(18))),
+                                        BorderRadius.all(Radius.circular(18))),
                                 child: Icon(
-                                  Icons.date_range,
+                                  Icons.send_to_mobile,
                                   color: Colors.green[900],
                                   size: 30,
                                 ),
@@ -245,7 +261,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 decoration: BoxDecoration(
                                     color: Color.fromRGBO(243, 245, 248, 1),
                                     borderRadius:
-                                    BorderRadius.all(Radius.circular(18))),
+                                        BorderRadius.all(Radius.circular(18))),
                                 child: Icon(
                                   Icons.public,
                                   color: Colors.green[900],
@@ -297,47 +313,6 @@ class _HomeScreenState extends State<HomeScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
                               Text(
-                                "Running IAT Subscription",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w900,
-                                    fontSize: 16,
-                                    color: Colors.black),
-                              ),
-
-                            ],
-                          ),
-                          padding: EdgeInsets.symmetric(horizontal: 32),
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        FutureBuilder<IatData>(
-                          future: iat,
-                          // ignore: missing_return
-                          builder: (BuildContext context,
-                              AsyncSnapshot<IatData> snapshot) {
-                            if (snapshot.hasData) {
-                              IatData userIat = snapshot.data;
-                              return OttSubscription(
-                                iatSubscription: userIat,
-                              );
-                            } else if (snapshot.hasError) {
-                              SessionStorage sessionStorage = new SessionStorage();
-                              sessionStorage.logout();
-                              Navigator.pushReplacement( context, MaterialPageRoute( builder: (context) => StartApp()));
-                            } else {
-                              return Center(child: CircularProgressIndicator());
-                            }
-                          },
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Container(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Text(
                                 "Recent Transactions",
                                 style: TextStyle(
                                     fontWeight: FontWeight.w900,
@@ -347,37 +322,80 @@ class _HomeScreenState extends State<HomeScreen> {
                               Text(
                                 "See all",
                                 style: TextStyle(
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 16,
-                                    color: Colors.grey[800]),
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 16,
+                                  color: Colors.grey[800],
+                                ),
                               )
                             ],
                           ),
                           padding: EdgeInsets.symmetric(horizontal: 32),
                         ),
                         SizedBox(
-                          height: 24,
+                          width: 24,
                         ),
+
                         //Container for buttons
                         ButtonsData(),
 
-                        SizedBox(
-                          height: 16,
+                        Container(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Text(
+                                "IAT Subscription",
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.grey[500],
+                                ),
+                              ),
+                            ],
+                          ),
+                          padding: EdgeInsets.symmetric(horizontal: 32),
                         ),
+                        SizedBox(
+                          width: 16,
+                        ),
+                        FutureBuilder<IatData>(
+                          future: iat,
+                          // ignore: missing_return
+                          builder: (BuildContext context,
+                              AsyncSnapshot<IatData> snapshot) {
+                            if (snapshot.hasData) {
+                              IatData userIat = snapshot.data;
+                              if (!snapshot.hasData) {
+                                return Center(
+                                    child: Text('No running IAT Subscription'));
+                              }
+                              return OttSubscription(
+                                iatSubscription: userIat,
+                              );
+                            } else if (snapshot.hasError) {
+                              return Padding(
+                                padding: const EdgeInsets.all(20.0),
+                                child: Center(
+                                  child: Text(
+                                      "Failed To fetch data, Please check your internet connection"),
+                                ),
+                              );
+                            } else {
+                              return Center(child: CircularProgressIndicator());
+                            }
+                          },
+                        ),
+
                         //Container Listview for expenses and incomes
                         Container(
                           child: Text(
                             "Last 5 Payments",
                             style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w700,
-                                color: Colors.grey[500]),
+                              fontSize: 15,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.grey[500],
+                            ),
                           ),
                           padding: EdgeInsets.symmetric(horizontal: 32),
-                        ),
-
-                        SizedBox(
-                          height: 10,
                         ),
 
                         FutureBuilder<List<PaymentsData>>(
@@ -393,21 +411,24 @@ class _HomeScreenState extends State<HomeScreen> {
                               return ListView.builder(
                                 primary: false,
                                 shrinkWrap: true,
-                                itemCount: transactions .length,
+                                itemCount: transactions.length,
                                 itemBuilder: (context, position) {
                                   return InkWell(
                                     splashColor: Colors.grey[200],
-                                    onTap: () {
-                                      
-                                    },
+                                    onTap: () {},
                                     child: TransactionData(
-                                        trans: transactions [position]),
+                                        trans: transactions[position]),
                                   );
                                 },
                               );
                             } else if (snapshot.hasError) {
-                              return Text(
-                                  'Error: ' + snapshot.error.toString());
+                              return Padding(
+                                padding: const EdgeInsets.all(20.0),
+                                child: Center(
+                                  child: Text(
+                                      "Failed To fetch data, Please check your internet connection"),
+                                ),
+                              );
                             } else {
                               return Container(
                                 child:
@@ -460,6 +481,20 @@ class _HomeScreenState extends State<HomeScreen> {
             )
           ],
         ),
+      ),
+    );
+  }
+
+  void _sendMoney(BuildContext pd) {
+    showModalBottomSheet(
+      isScrollControlled: true,
+      elevation: 5,
+      context: pd,
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
+      builder: (ctx) => Padding(
+        padding: EdgeInsets.only(bottom: 200),
+        child: SendMoney(),
       ),
     );
   }

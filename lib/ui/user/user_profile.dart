@@ -26,10 +26,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   SettingsService settingsService = SettingsServiceFactory.create();
 
+  SessionStorage sessionStorage = new SessionStorage();
+  bool _isLoggedIn = false;
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    _checkLogin();
+  }
+
+  _checkLogin() async {
+    var isLoggedIn = await sessionStorage.loginStatus();
+    if (isLoggedIn) {
+      setState(() {
+        _isLoggedIn = true;
+      });
+    }
+    if(_isLoggedIn == false){
+      Navigator.pushReplacement( context, MaterialPageRoute( builder: (context) => SignIn()));
+    }
   }
 
   _update() async {
@@ -84,11 +100,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 text: "My Account",
                 icon: "assets/icons/User Icon.svg",
                 press: () => {
-                  //_profileDisplay(context)
-                  Toast.show("Coming soon", context,
-                      duration: Toast.LENGTH_LONG,
-                      gravity: Toast.BOTTOM,
-                      backgroundColor: Colors.orange)
+                  _profileDisplay(context),
                 },
               ),
               ProfileMenu(

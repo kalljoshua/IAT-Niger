@@ -50,7 +50,7 @@ class _StartAppState extends State<StartApp> {
       
       home: _isLoggedIn
         ? WalletIndex()
-        : LoginScreen(),
+        : SignIn(),
       debugShowCheckedModeBanner: false,
     );
   }

@@ -50,7 +50,9 @@ class _ProfileDisplayState extends State<ProfileDisplay> {
               color: Colors.black,
             ),
             Row(
-              children: <Widget>[],
+              children: <Widget>[
+
+              ],
             ),
 
           ],

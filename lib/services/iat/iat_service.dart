@@ -18,7 +18,6 @@ class IatService {
 
   Future<IatData> getUserIatInfo() async {
     String userToken =  await sessionStorage.getToken();
-    print("***User token: "+userToken);
     Map<String, String> headers = {
       HttpHeaders.authorizationHeader: 'Bearer $userToken',
       'Content-Type': 'application/json; charset=UTF-8'

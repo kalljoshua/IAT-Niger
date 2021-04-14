@@ -86,7 +86,6 @@ class _PayOTTState extends State<PayOTT> {
           backgroundColor: Colors.red);
     }
 
-    print("****Posted values: " + jsonEncode(data));
   }
 
   @override
@@ -192,6 +191,14 @@ class _PayOTTState extends State<PayOTT> {
                           onChanged: _handleGenderChange,
                         ),
                       ),
+                      ListTile(
+                        title: const Text('Yearly'),
+                        leading: Radio<String>(
+                          value: "YEARLY",
+                          groupValue: _package,
+                          onChanged: _handleGenderChange,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -248,8 +255,8 @@ class _PayOTTState extends State<PayOTT> {
                         borderRadius: BorderRadius.circular(30),
                         gradient: LinearGradient(
                           colors: [
-                            const Color(0xfff44336),
-                            const Color(0xfef45336)
+                            const Color.fromRGBO(0, 131, 78, 1),
+                            const Color(0xfe1cb430),
                           ],
                         )),
                     width: MediaQuery.of(context).size.width * 0.65,

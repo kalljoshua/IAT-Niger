@@ -1,9 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:iat_nigeria/constants/constants.dart';
 import 'package:iat_nigeria/services/auth/auth_service.dart';
 import 'package:iat_nigeria/services/auth/auth_service_factory.dart';
 import 'package:iat_nigeria/services/auth/user_signup_data.dart';
 import 'package:iat_nigeria/ui/wallet/wallet_index.dart';
+import 'package:iat_nigeria/utils/waiting_dialog.dart';
 import 'package:toast/toast.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -23,7 +25,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   TextEditingController usernameEditingController = new TextEditingController();
 
   final formKey = GlobalKey<FormState>();
-  bool isLoading = false;
+  bool _isLoading = false;
 
   bool _enabled = false;
 
@@ -39,40 +41,43 @@ class _SignUpScreenState extends State<SignUpScreen> {
     _enabled = !_enabled;
   }
 
-  signUp() async {
+  _signUp() async {
     if (!formKey.currentState.validate()) {
-      return;
+      setState(() {
+        _isLoading = true;
+      });
+
+      UserSignUpData signUpData = new UserSignUpData(
+        email: emailEditingController.text,
+        passWord: passwordEditingController.text,
+        contact: widget.phone,
+      );
+
+      var response = await authenticationService.signUpUser(signUpData);
+      print("Renspose code signup: **" + response.toString());
+      if (response) {
+        Toast.show("Signup succesful", context,
+            duration: Toast.LENGTH_LONG,
+            gravity: Toast.BOTTOM,
+            backgroundColor: Colors.green);
+        Navigator.of(context).push(
+            MaterialPageRoute(
+                builder: (BuildContext context) => WalletIndex()));
+      } else {
+        Toast.show("Failed to signup", context,
+            duration: Toast.LENGTH_LONG,
+            gravity: Toast.BOTTOM,
+            backgroundColor: Colors.red);
+      }
+
+      setState(() {
+        _isLoading = false;
+      });
+    }else{
+      setState(() {
+        _isLoading = false;
+      });
     }
-
-    setState(() {
-      isLoading = true;
-    });
-
-    UserSignUpData signUpData = new UserSignUpData(
-      email: emailEditingController.text,
-      passWord: passwordEditingController.text,
-      contact: widget.phone,
-    );
-
-    var response = await authenticationService.signUpUser(signUpData);
-    print("Renspose code signup: **" + response.toString());
-    if (response) {
-      Toast.show("Signup succesful", context,
-          duration: Toast.LENGTH_LONG,
-          gravity: Toast.BOTTOM,
-          backgroundColor: Colors.green);
-      Navigator.of(context).push(
-          MaterialPageRoute(builder: (BuildContext context) => WalletIndex()));
-    } else {
-      Toast.show("Failed to signup", context,
-          duration: Toast.LENGTH_LONG,
-          gravity: Toast.BOTTOM,
-          backgroundColor: Colors.red);
-    }
-
-    setState(() {
-      isLoading = false;
-    });
   }
 
   @override
@@ -81,7 +86,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Sign Up"),
-        backgroundColor: Colors.green,
+        backgroundColor: themeColor,
       ),
       body: Container(
         child: SafeArea(
@@ -200,7 +205,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           ),
                           GestureDetector(
                             onTap: () {
-                              signUp();
+                              _isLoading ? null :_signUp();
                             },
                             child: Container(
                               padding: EdgeInsets.symmetric(vertical: 16),
@@ -208,8 +213,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   borderRadius: BorderRadius.circular(30),
                                   gradient: LinearGradient(
                                     colors: [
-                                      const Color(0xfe36f44f),
-                                      const Color(0xffbbf436),
+                                      const Color.fromRGBO(0, 131, 78, 1),
+                                      const Color(0xfe1cb430),
 
                                     ],
                                   )),

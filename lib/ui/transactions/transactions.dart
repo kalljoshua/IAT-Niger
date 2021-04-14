@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:iat_nigeria/services/transactions/models/last_transaction_data.dart';
 import 'package:iat_nigeria/services/transactions/trans_service_factory.dart';
 import 'package:iat_nigeria/services/transactions/transaction_service.dart';
+import 'package:iat_nigeria/session/session_storage.dart';
+import 'package:iat_nigeria/ui/auth/sign_in/sign_in.dart';
 
 import 'deposit_transactions.dart';
 import 'expense_transactions.dart';
@@ -17,13 +19,27 @@ class _TransactionIndexState extends State<TransactionIndex> {
 
   Future<List<PaymentsData>> lastTrans;
 
+  SessionStorage sessionStorage = new SessionStorage();
+  bool _isLoggedIn = false;
+
   @override
   void initState() {
     super.initState();
     _getUserTransactions();
   }
 
-  _getUserTransactions() {
+  _getUserTransactions() async{
+
+    var isLoggedIn = await sessionStorage.loginStatus();
+    if (isLoggedIn) {
+      setState(() {
+        _isLoggedIn = true;
+      });
+    }
+    if(_isLoggedIn == false){
+      sessionStorage.logout();
+      Navigator.pushReplacement( context, MaterialPageRoute( builder: (context) => SignIn()));
+    }
     Future<List<PaymentsData>> transFuture =
         lastTransaction.getPaymentData();
 
@@ -186,7 +202,13 @@ class _TransactionIndexState extends State<TransactionIndex> {
                                 ScrollController(keepScrollOffset: false),
                           );
                         } else if (snapshot.hasError) {
-                          return Text('Error: ' + snapshot.error.toString());
+                          return Padding(
+                            padding: const EdgeInsets.all(20.0),
+                            child: Center(
+                              child: Text(
+                                  "Failed To fetch data, Please check your internet connection"),
+                            ),
+                          );
                         } else {
                           return Container(
                             child: Center(child: CircularProgressIndicator()),
@@ -235,7 +257,13 @@ class _TransactionIndexState extends State<TransactionIndex> {
                             ScrollController(keepScrollOffset: false),
                           );
                         } else if (snapshot.hasError) {
-                          return Text('Error: ' + snapshot.error.toString());
+                          return Padding(
+                            padding: const EdgeInsets.all(20.0),
+                            child: Center(
+                              child: Text(
+                                  "Failed To fetch data, Please check your internet connection"),
+                            ),
+                          );
                         } else {
                           return Container(
                             child: Center(child: CircularProgressIndicator()),
