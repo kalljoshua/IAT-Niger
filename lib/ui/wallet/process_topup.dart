@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iat_nigeria/ui/wallet/wallet_index.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class WebViewClass extends StatefulWidget {
@@ -19,8 +20,11 @@ class _WebViewClassState extends State<WebViewClass> {
       appBar: AppBar(
         backgroundColor: Colors.green,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Navigator.of(context).pop(),
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => WalletIndex()));
+          },
         ),
       ),
       body: Container(
